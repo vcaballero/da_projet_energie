@@ -1,0 +1,1 @@
+web: sh setup.sh && streamlit run sl_df_20210827.py
