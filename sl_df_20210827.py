@@ -27,20 +27,38 @@ page = st.sidebar.radio("", options = [ 'Evolution des Températures', 'Producti
 st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manières interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
 
 
-if page == 'Evolution des Températures':
-    st.title('Evolution des températures')
-    st.markdown('Vous avez la possibilité de visualiser les données brutes des températures relevées de 2016 à 2020.')
-    st.markdown('Pour chaque région sélectionnée, vous visualiserez les températures minimale, moyenne et maximale.')
-    region_temperature = st.selectbox("Choisissez une Région", ['', 'Bretagne', 'Nouvelle-Aquitaine', 'Île-de-France',
+if page == 'Consomations/Températures':
+    import numpy as np
+    import matplotlib as plt
+    
+    region_temp_conso = st.selectbox("Choisissez une Région", ['Bretagne', 'Nouvelle-Aquitaine', 'Île-de-France',
        'Bourgogne-Franche-Comté', 'Auvergne-Rhône-Alpes', 'Normandie',
        'Occitanie', 'Centre-Val de Loire', 'Hauts-de-France', 'Grand Est',
        "Provence-Alpes-Côte d'Azur", 'Pays de la Loire'])
-    df_conso_temperatures_regions = pd.read_csv("df_conso_temperatures_regions.csv")
-    chart_data = pd.DataFrame(
-        df_conso_temperatures_regions[df_conso_temperatures_regions['Région']==region_temperature],
-        columns=['tmin', 'tmoy', 'tmax'])
+    
+    '''
+    
+    '''
+    
+    
+    import streamlit as st
+    from bokeh.plotting import figure
 
-    st.line_chart(chart_data)
+    df_temp_conso = pd.read_csv('df_temp_conso.csv')
+    x = df_temp_conso.tmoy[df_temp_conso['Région']==region_temp_conso]
+    y = df_temp_conso['Consommation (MW)'][df_temp_conso['Région']==region_temp_conso]/1000
+    mymodel = np.poly1d(np.polyfit(x, y, 4))
+    myline = np.linspace(df_temp_conso.tmoy[df_temp_conso['Région']==region_temp_conso].min(), df_temp_conso.tmoy[df_temp_conso['Région']==region_temp_conso].max())
+
+    p = figure(
+        title='Consommations en fonction de la température',
+        x_axis_label='Témpératures moyennes',
+        y_axis_label='Consommations en Miliers de MW')
+
+    p.line(myline, mymodel(myline), color='red', line_width=4)
+
+    st.bokeh_chart(p, use_container_width=True)
+
 
 
 
