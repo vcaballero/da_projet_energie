@@ -23,7 +23,7 @@ def load_data(nrows):
 
 
 st.sidebar.title('Analyses Projet Energie')
-page = st.sidebar.radio("", options = [ 'Consommations/Températures', 'Production/Consommation', 'Carte Sources Energies de France', 'Consommation par Secteur'])
+page = st.sidebar.radio("", options = ['Production/Consommation', 'Carte Sources Energies de France', 'Consommation par Secteur'])
 st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manières interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
 
 
@@ -155,10 +155,7 @@ if page == 'Carte Sources Energies de France':
                           )
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     st.plotly_chart(fig)
-    with st.expander("Voir les explications"):
-        st.write("""
-                 Ici nous pouvons mettre d'autres informations utiles sur la répartition des productions à travers la France.'
-                 """)
+
 
 
 if page == 'Consommation par Secteur':
@@ -193,21 +190,4 @@ if page == 'Consommation par Secteur':
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     st.plotly_chart(fig)
     
-    with st.expander("Informations complémentaires"):
-        if type_energie == 'Consommation Agriculture (MWh)':
-            st.write("""
-                 Ici nous pouvons ajouter des commentaires issus du rapport par exemple.
-                 """)
-        if type_energie == 'Consommation Industrie (MWh)':
-            st.write("""
-                 Les régions dont la consommation industrielle est plus forte que les autres secteurs activités sont l’Auvergne- Rhône-Alpes, les Hauts-de-France et le Grand-Est.
-                 """)
-        if type_energie == 'Consommation Tertiaire  (MWh)':
-            st.write("""
-                 Les régions dont la consommation tertiaire est plus forte que les autres secteurs activités est l’Ile-de-France, l’Auvergne-Rhône-Alpes et la Provence-Alpes-Côte d’Azur.
-                 """)
-        if type_energie == 'Consommation Résidentiel  (MWh)':
-            st.write("""
-                 Les régions dont la consommation résidentielle est plus forte que les autres secteurs activités sont l’Ile-de-France, l’Auvergne-Rhône-Alpes et l’Occitanie.
-                 """)
-
+   
