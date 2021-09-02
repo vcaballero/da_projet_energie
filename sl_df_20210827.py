@@ -23,11 +23,11 @@ def load_data(nrows):
 
 
 st.sidebar.title('Analyses Projet Energie')
-page = st.sidebar.radio("", options = [ 'Consomations/Températures', 'Production/Consommation', 'Carte Sources Energies de France', 'Consommation par Secteur'])
+page = st.sidebar.radio("", options = [ 'Consommations/Températures', 'Production/Consommation', 'Carte Sources Energies de France', 'Consommation par Secteur'])
 st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manières interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
 
 
-if page == 'Consomations/Températures':
+if page == 'Consommations/Températures':
     import numpy as np
     import matplotlib as plt
     
