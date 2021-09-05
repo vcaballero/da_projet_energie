@@ -23,7 +23,7 @@ def load_data(nrows):
 
 
 st.sidebar.title('Analyses Projet Energie')
-page = st.sidebar.radio("", options = ['Production/Consommation', 'Carte Sources Energies de France', 'Consommation par Secteur'])
+page = st.sidebar.radio("", options = ['Production', 'Consommation', 'Evolutions du Climat'])
 st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manières interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
 
 
@@ -62,15 +62,10 @@ if page == 'Consommations/Températures':
 
 
 
-if page == 'Production/Consommation':
-    st.title('Production et Consommation d\'énergie par Région')
+if page == 'Production':
+    st.title('Production d\'énergie par Région')
     st.markdown('En choissant une région, vous avez la possibilité de comparer la production et la consommation de chaque région de 2013 à 2020')
     @st.cache
-    
-    def get_data_consommation():
-        df = pd.read_csv('df_streamlit.csv')
-        df = df.reset_index()
-        return df.set_index("Libellé Région")
 
     def get_data_production():
         df_prod = pd.read_csv('df_production.csv')
@@ -78,7 +73,6 @@ if page == 'Production/Consommation':
         return df_prod.set_index("Libellé Région")
 
     try:
-        df = get_data_consommation()
         df_prod = get_data_production()
         region = st.multiselect(
             "Choisissez vos régions", list(df_prod.index), ["Île-de-France", "Centre-Val de Loire"]
@@ -100,6 +94,67 @@ if page == 'Production/Consommation':
                 .encode(x="Annee:T", y=alt.Y("Production (MW):Q", stack=None), color="Libellé Région:N",))
             st.altair_chart(chart_prod, use_container_width=True)
             
+          
+    except URLError as e:
+                st.error(
+               """
+               **This demo requires internet access.**
+
+                Connection error: %s
+                """
+            % e.reason
+            )
+
+
+    import streamlit as st
+    import pandas as pd
+    import plotly.express as px
+    from urllib.request import urlopen
+    import json
+    st.title('Sources Energétiques de France en 2020')
+    st.markdown('Cette carte vous présente de manière interactive la répartition géographique des différentes sources d\'énergie.')
+    st.markdown('Sélectionnez un type de production d’énergie pour voir les volumes de production par région.')
+    with urlopen('http://france-geojson.gregoiredavid.fr/repo/regions.geojson') as response:
+        regions = json.load(response)
+
+    
+    df = pd.read_csv("df_energie_2020.csv",
+                   dtype={"Code INSEE région": str})
+
+
+    type_energie = st.selectbox("Choisissez une source d'énergie",['Thermique (MW)', 'Nucléaire (MW)','Hydraulique (MW)', 'Solaire (MW)', 'Eolien (MW)'])
+
+    fig = px.choropleth_mapbox(df, geojson=regions, locations='Libellé Région',             color=type_energie,
+                           featureidkey="properties.nom",
+                           color_continuous_scale="YlGnBu",
+                           range_color=(df[type_energie].min(), df[type_energie].max()),
+                           mapbox_style="carto-positron",
+                           zoom=4.5, center = {"lat": 47.000193, "lon": 2.209667},
+                           opacity=0.8,
+                           labels=type_energie
+                          )
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    st.plotly_chart(fig)
+
+if page == 'Consommation':
+    st.title('Consommation d\'énergie par Région')
+    st.markdown('En choissant une région, vous avez la possibilité de comparer la consommation de chaque région de 2013 à 2020')
+    @st.cache
+    
+    def get_data_consommation():
+        df = pd.read_csv('df_streamlit.csv')
+        df = df.reset_index()
+        return df.set_index("Libellé Région")
+    try:
+        df = get_data_consommation()
+        region = st.multiselect(
+            "Choisissez vos régions", list(df.index), ["Île-de-France", "Centre-Val de Loire"]
+            )
+        if not region:
+            st.error("Merci de choisir une région.")
+        else:
+            
+           
             # Traitement de la partie Consommation
             data = df.loc[region]
             st.write("### Consommations électrique en MW", data.sort_index())
@@ -123,42 +178,6 @@ if page == 'Production/Consommation':
             % e.reason
             )
 
-
-    
-if page == 'Carte Sources Energies de France':
-    import streamlit as st
-    import pandas as pd
-    import plotly.express as px
-    from urllib.request import urlopen
-    import json
-    st.title('Sources Energétiques de France en 2020')
-    st.markdown('Cette carte vous présente de manière interactive la répartition géographique des différentes sources d\'énergie.')
-    st.markdown('Sélectionnez un type de production d’énergie pour voir les volumes de production par région.')
-    with urlopen('http://france-geojson.gregoiredavid.fr/repo/regions.geojson') as response:
-        regions = json.load(response)
-
-    
-    df = pd.read_csv("df_energie_2020.csv",
-                   dtype={"Code INSEE région": str})
-
-
-    type_energie = st.selectbox("Choisissez une source d'énergie",['Thermique (MW)', 'Nucléaire (MW)','Hydraulique (MW)', 'Solaire (MW)', 'Eolien (MW)'])
-
-    fig = px.choropleth_mapbox(df, geojson=regions, locations='Libellé Région',             color=type_energie,
-                           featureidkey="properties.nom",
-                           color_continuous_scale="Viridis",
-                           range_color=(df[type_energie].min(), df[type_energie].max()),
-                           mapbox_style="carto-positron",
-                           zoom=4.5, center = {"lat": 47.000193, "lon": 2.209667},
-                           opacity=0.5,
-                           labels=type_energie
-                          )
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig)
-
-
-
-if page == 'Consommation par Secteur':
     import streamlit as st
     import pandas as pd
     import plotly.express as px
@@ -180,14 +199,17 @@ if page == 'Consommation par Secteur':
 
     fig = px.choropleth_mapbox(df, geojson=regions, locations='Libellé Région',             color=type_energie,
                            featureidkey="properties.nom",
-                           color_continuous_scale="Viridis",
+                           color_continuous_scale="YlGnBu",
                            range_color=(df[type_energie].min(), df[type_energie].max()),
                            mapbox_style="carto-positron",
                            zoom=4.5, center = {"lat": 47.000193, "lon": 2.209667},
-                           opacity=0.5,
+                           opacity=0.8,
                            labels=type_energie
                           )
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     st.plotly_chart(fig)
     
-   
+if page == 'Evolutions du Climat':
+    st.title('Evolutions du Climat')
+    st.markdown('...En cours...')
+ 
