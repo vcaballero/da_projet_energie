@@ -24,7 +24,7 @@ def load_data(nrows):
 
 st.sidebar.title('Analyses Projet Energie')
 page = st.sidebar.radio("", options = ['Production', 'Consommation', 'Evolutions du Climat'])
-st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manières interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
+st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manière interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
 
 
 if page == 'Consommations/Températures':
