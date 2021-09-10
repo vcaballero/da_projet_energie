@@ -126,7 +126,7 @@ if page == 'Production':
 
     fig = px.choropleth_mapbox(df, geojson=regions, locations='Libellé Région',             color=type_energie,
                            featureidkey="properties.nom",
-                           color_continuous_scale="YlGnBu",
+                           color_continuous_scale="Viridis",
                            range_color=(df[type_energie].min(), df[type_energie].max()),
                            mapbox_style="carto-positron",
                            zoom=4.5, center = {"lat": 47.000193, "lon": 2.209667},
@@ -199,7 +199,7 @@ if page == 'Consommation':
 
     fig = px.choropleth_mapbox(df, geojson=regions, locations='Libellé Région',             color=type_energie,
                            featureidkey="properties.nom",
-                           color_continuous_scale="YlGnBu",
+                           color_continuous_scale="OrRd",
                            range_color=(df[type_energie].min(), df[type_energie].max()),
                            mapbox_style="carto-positron",
                            zoom=4.5, center = {"lat": 47.000193, "lon": 2.209667},
