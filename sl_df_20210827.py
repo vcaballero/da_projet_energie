@@ -23,8 +23,18 @@ def load_data(nrows):
 
 
 st.sidebar.title('Analyses Projet Energie')
-page = st.sidebar.radio("", options = ['Production', 'Consommation', 'Evolutions du Climat'])
-st.sidebar.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manière interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
+page = st.sidebar.radio("", options = ['Introduction', 'Production', 'Consommation', 'Températures et Consommations'])
+
+
+
+if page == 'Introduction':
+    st.title('Présentation du Projet Energie')
+    st.markdown('**_Le secteur de l’énergie suscite un vif intérêt depuis ces dernières années._**') 
+    st.markdown('**_Les questionnements portent sur la production nécessaire aux besoins   énergétiques quotidiens des Français (le chauffage individuel, les transports, les collectivités et les entreprises etc…), aux questions de transitions énergétiques nationales pour amorcer les développements verts, et tout cela, dans un contexte de libre concurrence économique._**')
+    st.markdown('**_La connaissance de ce marché est une étape préliminaire importante à la compréhension des habitudes de consommations et de productions sur le territoire Français dans les objectifs de maîtriser les demandes énergétiques, les flux de productions, et manager les aménagements énergétiques._**')
+    st.title('Interface d\'exploration Streamlit')
+    st.markdown('**_A travers les 4 menus disponibles, nous vous proposons de visualiser de manière interactive quelques tableaux, graphiques et cartes géographiques de notre étude sur le thème des énergies en France._**')
+
 
 
 if page == 'Consommations/Températures':
@@ -44,7 +54,7 @@ if page == 'Consommations/Températures':
     import streamlit as st
     from bokeh.plotting import figure
 
-    df_temp_conso = pd.read_csv('df_temp_conso.csv')
+    df_temp_conso = pd.read_csv('http://coboo.fr/projet-energie/df_temp_conso.csv')
     x = df_temp_conso.tmoy[df_temp_conso['Région']==region_temp_conso]
     y = df_temp_conso['Consommation (MW)'][df_temp_conso['Région']==region_temp_conso]/1000
     mymodel = np.poly1d(np.polyfit(x, y, 4))
@@ -68,7 +78,7 @@ if page == 'Production':
     @st.cache
 
     def get_data_production():
-        df_prod = pd.read_csv('df_production.csv')
+        df_prod = pd.read_csv('http://coboo.fr/projet-energie/df_production.csv')
         df_prod = df_prod.reset_index()
         return df_prod.set_index("Libellé Région")
 
@@ -118,7 +128,7 @@ if page == 'Production':
         regions = json.load(response)
 
     
-    df = pd.read_csv("df_energie_2020.csv",
+    df = pd.read_csv("http://coboo.fr/projet-energie/df_energie_2020.csv",
                    dtype={"Code INSEE région": str})
 
 
@@ -142,7 +152,7 @@ if page == 'Consommation':
     @st.cache
     
     def get_data_consommation():
-        df = pd.read_csv('df_streamlit.csv')
+        df = pd.read_csv('http://coboo.fr/projet-energie/df_conso.csv')
         df = df.reset_index()
         return df.set_index("Libellé Région")
     try:
@@ -189,7 +199,7 @@ if page == 'Consommation':
         regions = json.load(response)
 
     
-    df = pd.read_csv("consommation_secteurs.csv",
+    df = pd.read_csv("http://coboo.fr/projet-energie/consommation_secteurs.csv",
                    dtype={"Code INSEE région": str})
 
 
@@ -209,7 +219,120 @@ if page == 'Consommation':
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     st.plotly_chart(fig)
     
-if page == 'Evolutions du Climat':
-    st.title('Evolutions du Climat')
-    st.markdown('...En cours...')
+if page == 'Températures et Consommations':
+
+    # st.markdown('...En cours...')
+    
+    # import streamlit as st
+    # import time
+    # import numpy as np
+
+    # progress_bar = st.progress(0)
+    # status_text = st.empty()
+    # last_rows = np.random.randn(1, 1)
+    # chart = st.line_chart(last_rows)
+
+    # for i in range(1, 101):
+    #     new_rows = last_rows[-1, :] + np.random.randn(5, 1).cumsum(axis=0)
+    #     status_text.text("%i%% Complete" % i)
+    #     chart.add_rows(new_rows)
+    #     progress_bar.progress(i)
+    #     last_rows = new_rows
+    #     time.sleep(0.1)
+
+    # progress_bar.empty()
+
+    # Streamlit widgets automatically run the script from top to bottom. Since
+    # this button is not connected to any other logic, it just causes a plain
+    # rerun.
+    # st.button("Re-run")
+    
+    
+    import matplotlib.pyplot as plt
+    import matplotlib.animation as animation
+    import numpy as np
+    import streamlit as st
+    
+    # st.title('Consommations par secteur d\'activité')
+
+    # fig, ax = plt.subplots()
+
+    # max_x = 5
+    # max_rand = 10
+        
+    # x = np.arange(0, max_x)
+    # ax.set_ylim(0, max_rand)
+    # line, = ax.plot(x, np.random.randint(0, max_rand, max_x))
+
+
+    # def init():  # give a clean slate to start
+    #     line.set_ydata([np.nan] * len(x))
+    #     return line,
+
+
+    # def animate(i):  # update the y values (every 1000ms)
+    #     line.set_ydata(np.random.randint(0, max_rand, max_x))
+    #     return line,
+
+    # ani = animation.FuncAnimation(
+    #     fig, animate, init_func=init, interval=1000, blit=True, save_count=10)
+
+    # st.pyplot(plt)
+    
+    st.title('Lien entre températures moyennes et consommations énergétiques.')
+    st.markdown('Choisissez une région pour découvrir le lien entre les consommations en MW et les températures moyennes')
+    
+    import numpy
+    import matplotlib.pyplot as plt
+    
+    df_temp_conso = pd.read_csv("http://coboo.fr/projet-energie/df_temp_conso.csv")
+
+    region_selectionnee = st.selectbox("Choisissez une Région", ['Bretagne', 'Nouvelle-Aquitaine', 'Île-de-France',
+       'Bourgogne-Franche-Comté', 'Auvergne-Rhône-Alpes', 'Normandie',
+       'Occitanie', 'Centre-Val de Loire', 'Hauts-de-France', 'Grand Est',
+       "Provence-Alpes-Côte d'Azur", 'Pays de la Loire'])
+    
+    df_temp_conso_region_selectionnee = pd.DataFrame(df_temp_conso[df_temp_conso['Région']==region_selectionnee])
+    
+    
+    ## Création des dataframe extrait de la sélection pour afficher températures moyennes et consommations
+    chart_data_tmoy = pd.DataFrame(df_temp_conso[df_temp_conso['Région']==region_selectionnee].groupby('annee')['tmoy'].mean(),
+                                   columns=['tmoy'])
+    
+
+    
+    chart_data_conso = pd.DataFrame(df_temp_conso[df_temp_conso['Région']==region_selectionnee],
+                                   columns=['Consommation (MW)'])
+    
+    st.title(f'Evolution des températures moyennes en {region_selectionnee}')
+    import streamlit as st
+    st.line_chart(chart_data_tmoy)
+    
+
+    chart_data_conso = pd.DataFrame(df_temp_conso[df_temp_conso['Région']==region_selectionnee].groupby('annee')['Consommation (MW)'].mean(),
+                                   columns=['Consommation (MW)'])
+    
+    st.title(f'Evolution des Consommations moyennes en {region_selectionnee}')
+    import streamlit as st
+    st.line_chart(chart_data_conso)
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+    
+    st.title(f'Lien entre températures moyennes et consommations en {region_selectionnee}f')
+
+    x = df_temp_conso.tmoy[df_temp_conso['Région']==region_selectionnee]
+    y = df_temp_conso['Consommation (MW)'][df_temp_conso['Région']==region_selectionnee]
+    mymodel = numpy.poly1d(numpy.polyfit(x, y, 4))
+    myline = numpy.linspace(df_temp_conso.tmoy[df_temp_conso['Région']==region_selectionnee].min(),       df_temp_conso.tmoy[df_temp_conso['Région']==region_selectionnee].max())
+    plt.figure(figsize = (8,8))
+    plt.scatter(x, y)
+    plt.plot(myline, mymodel(myline), 'r', linewidth=4)
+    st.pyplot()
+    
+    
+    st.title(f'Dataframe extrait de la région {region_selectionnee}')
+    df_temp_conso_region_selectionnee
+
+    
+    
+    
  
